@@ -1,15 +1,15 @@
 package controllers
 
 import (
-	model "Gin-Learn/models"
-	"Gin-Learn/models/respose"
+	"Gin-Learn/entity/entity"
+	"Gin-Learn/entity/respose"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 func Login(ctx *gin.Context){
-	var admin model.Admin
+	var admin entity.Admin
 	if err := ctx.ShouldBindJSON(&admin) ;err!=nil{
 		ctx.JSON(http.StatusBadRequest,respose.ErrorWithMsg(err.Error()))
 		return 
