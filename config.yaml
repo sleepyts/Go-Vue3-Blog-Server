@@ -1,0 +1,14 @@
+database:
+  host: 127.0.0.1
+  port: 3306
+  user: root
+  password: 1234
+  name: blog
+redis:
+  host: 111.230.11.195
+  port: 6379
+  password: 123456
+app:
+  port: 8080
+  name: Gin-Learn
+  env: dev
