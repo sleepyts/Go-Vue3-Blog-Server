@@ -1,7 +1,7 @@
 package config
 
 import (
-	"Gin-Learn/globalVar"
+	"Go-Vue3-Blog-Server/globalVar"
 	"fmt"
 	"log"
 

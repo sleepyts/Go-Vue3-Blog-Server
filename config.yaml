@@ -1,0 +1,16 @@
+# [Mysql]
+database:
+  host: 127.0.0.1
+  port: 3306
+  user: root
+  password: 1234
+  name: blog
+# [Redis]
+redis:
+  host: localhost
+  port: 6379
+# [App]
+app:
+  port: 8080
+  name: Gin-Learn
+  env: dev

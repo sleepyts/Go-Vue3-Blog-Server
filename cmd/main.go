@@ -1,14 +1,12 @@
 package main
 
 import (
-	"Gin-Learn/config"
-	"Gin-Learn/router"
-	"fmt"
+	"Go-Vue3-Blog-Server/config"
+	"Go-Vue3-Blog-Server/router"
 )
 
 func main() {
 	config.Init()
-	fmt.Println(config.AppConfig)
-	r:=router.InitServer()
-	r.Run(":"+config.AppConfig.App.Port)
+	r := router.InitServer()
+	r.Run(":" + config.AppConfig.App.Port)
 }
