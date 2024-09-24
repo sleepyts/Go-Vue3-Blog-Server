@@ -3,9 +3,14 @@ package controllers
 import (
 	"Go-Vue3-Blog-Server/models/dto"
 	"Go-Vue3-Blog-Server/models/respose"
+	"Go-Vue3-Blog-Server/models/vo"
 	"Go-Vue3-Blog-Server/server"
+	"Go-Vue3-Blog-Server/utils/redis_util"
+	"crypto/rand"
+	"math/big"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -42,4 +47,20 @@ func AddComment(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, server.AddComment(commentDTO))
+}
+
+func GetCommentVerify(ctx *gin.Context) {
+	var (
+		verifyVO vo.Verify
+		key      string
+	)
+	var1, _ := rand.Int(rand.Reader, big.NewInt(10))
+	verifyVO.Var1 = var1.String()
+	var2, _ := rand.Int(rand.Reader, big.NewInt(10))
+	verifyVO.Var2 = var2.String()
+	key = strconv.FormatInt((time.Now().UnixNano() / 1e6), 10)
+	verifyVO.Key = key
+	verifyVO.VerifyVar = ""
+	redis_util.SetObject(key, verifyVO, time.Minute*2)
+	ctx.JSON(http.StatusOK, respose.Sucess(verifyVO))
 }

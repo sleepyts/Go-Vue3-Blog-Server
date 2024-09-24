@@ -18,19 +18,19 @@ func SetObject(key string, value interface{}, expiration time.Duration) error {
 	}
 	return nil
 }
-
-func GetObject(key string) (interface{}, error) {
+func GetObject(key string, target interface{}) error {
 	// 从 Redis 中获取数据
 	valueJson, err := globalVar.RedisDb.Get(key).Result()
-	if err == nil {
-		// 反序列化
-		var value interface{}
-		if err := json.Unmarshal([]byte(valueJson), &value); err != nil {
-			return nil, err
-		}
-		return value, nil
+	if err != nil {
+		return err
 	}
-	return nil, err
+
+	// 反序列化到目标类型的指针中
+	if err := json.Unmarshal([]byte(valueJson), target); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func DeleteKeysWithPrefix(prefix string) error {

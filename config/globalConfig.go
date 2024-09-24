@@ -8,19 +8,20 @@ import (
 
 type Config struct {
 	App struct {
-		Name string
-		Port string
+		Name     string
+		Port     string
+		IndexUrl string
 	}
 	Database struct {
 		Host     string
 		Port     string
 		User     string
 		Password string
-		Name string
-	} 
-	Redis struct{
-		Host string
-		Port string
+		Name     string
+	}
+	Redis struct {
+		Host     string
+		Port     string
 		Password string
 	}
 }
@@ -32,16 +33,16 @@ func Init() {
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath("..")
 
-	if err:=viper.ReadInConfig(); err!=nil{
-		log.Fatalf("Read config error : %v",err)
+	if err := viper.ReadInConfig(); err != nil {
+		log.Fatalf("Read config error : %v", err)
 	}
 
-	AppConfig =&Config{}
-	if err := viper.Unmarshal(AppConfig);err!=nil{
-		log.Fatalf("Encoding config error: %v",err)
+	AppConfig = &Config{}
+	if err := viper.Unmarshal(AppConfig); err != nil {
+		log.Fatalf("Encoding config error: %v", err)
 	}
 
 	InitDb()
 	InitRedis()
-	 
+
 }

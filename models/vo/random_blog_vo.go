@@ -1,6 +1,8 @@
 package vo
 
-import "time"
+import (
+	"time"
+)
 
 type RandomBlogVO struct {
 	Id         uint       `json:"id"`

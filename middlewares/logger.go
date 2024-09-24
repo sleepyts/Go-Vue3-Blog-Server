@@ -11,6 +11,9 @@ func Logger() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		start := time.Now()
 		ctx.Next()
-		log.Print(time.Since(start))
+		go func() {
+			log.Printf("\nIp: %s\nRequest time: User-Agent: %s\nProcessed time: %s\nMethod: %s\nPath: %s\n", ctx.ClientIP(), ctx.Request.UserAgent(), time.Since(start), ctx.Request.Method, ctx.Request.URL.Path)
+
+		}()
 	}
 }

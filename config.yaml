@@ -12,5 +12,6 @@ redis:
 # [App]
 app:
   port: 8080
-  name: Gin-Learn
+  name: 未月拾叁
   env: dev
+  indexUtl: https://tsukiyo.cn
