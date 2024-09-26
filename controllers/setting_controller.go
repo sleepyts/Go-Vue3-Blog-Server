@@ -16,5 +16,7 @@ func GetSetting(ctx *gin.Context) {
 	)
 	copier.Copy(&settings, entity.GetSettings())
 	settings.RandomBlogVOs = entity.GetRandomBlogVO()
+	recentMoment, _ := entity.GetRecentMoments(5)
+	copier.Copy(&settings.RecentMoments, recentMoment)
 	ctx.JSON(http.StatusOK, respose.Sucess(settings))
 }

@@ -1,5 +1,7 @@
 package entity
 
+import "Go-Vue3-Blog-Server/globalVar"
+
 type App struct {
 	Id      uint   `json:"id" gorm:"primary_key"`
 	Title   string `json:"title"`
@@ -9,4 +11,10 @@ type App struct {
 
 func (App) TableName() string {
 	return "tb_app"
+}
+
+func GetApp() []App {
+	var apps []App
+	globalVar.Db.Find(&apps)
+	return apps
 }

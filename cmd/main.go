@@ -7,6 +7,8 @@ import (
 
 func main() {
 	config.Init()
+
 	r := router.InitServer()
+
 	r.Run(":" + config.AppConfig.App.Port)
 }

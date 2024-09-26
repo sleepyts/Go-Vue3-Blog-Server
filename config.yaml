@@ -14,4 +14,4 @@ app:
   port: 8080
   name: 未月拾叁
   env: dev
-  indexUtl: https://tsukiyo.cn
+  indexUrl: https://tsukiyo.cn

@@ -23,7 +23,11 @@ type Blog struct {
 func (Blog) TableName() string {
 	return "tb_blog"
 }
-
+func GetBlogById(id uint) Blog {
+	var blog Blog
+	globalVar.Db.First(&blog, id)
+	return blog
+}
 func GetRandomBlogVO() []vo.RandomBlogVO {
 	var (
 		randomBlogs = []Blog{}
@@ -32,12 +36,13 @@ func GetRandomBlogVO() []vo.RandomBlogVO {
 	)
 	globalVar.Db.Order("RAND()").Limit(3).Find(&randomBlogs)
 	wg.Add(len(randomBlogs))
+	result = make([]vo.RandomBlogVO, len(randomBlogs))
 	for index, blog := range randomBlogs {
 		go func(blog Blog, index int) {
 			defer wg.Done()
 			randomBlogVO := vo.RandomBlogVO{}
 			copier.Copy(&randomBlogVO, blog)
-			result = append(result, randomBlogVO)
+			result[index] = randomBlogVO
 		}(blog, index)
 	}
 	wg.Wait()
@@ -59,17 +64,18 @@ func GetBlogByPage(page, pageSize int) []vo.BlogVO {
 
 	wg = &sync.WaitGroup{}
 	wg.Add(len(blogs))
-	for _, blog := range blogs {
-		go func(blog Blog) {
+	blogVOs = make([]vo.BlogVO, len(blogs))
+	for index, blog := range blogs {
+		go func(blog Blog, index int) {
+			defer wg.Done()
 			var blogVO vo.BlogVO
 			copier.Copy(&blogVO, &blog)
 			var commentNum int64
 			globalVar.Db.Model(&Comment{}).Where("blog_id = ?", blogVO.Id).Count(&commentNum)
 			blogVO.CommentNum = int(commentNum)
 			globalVar.Db.Model(&Category{}).Select("name").Where("id = ?", blogVO.CategoryId).First(&blogVO.CategoryName)
-			blogVOs = append(blogVOs, blogVO)
-			wg.Done()
-		}(blog)
+			blogVOs[index] = blogVO
+		}(blog, index)
 	}
 	wg.Wait()
 	return blogVOs
@@ -105,4 +111,20 @@ func GetBlogCountByCategoryId(categoryId int) int64 {
 	var count int64
 	globalVar.Db.Model(Blog{}).Where("category_id = ?", categoryId).Count(&count)
 	return count
+}
+
+func GetRecordVO() []vo.RecordVO {
+	var (
+		RecordDTOs []vo.RecordDTO
+		RecordVO   []vo.RecordVO
+		Years      []string
+	)
+	globalVar.Db.Table("tb_blog").Select("DISTINCT YEAR(create_time) AS year").Order("year asc").Pluck("year", &Years)
+	RecordVO = make([]vo.RecordVO, len(Years))
+	for index, year := range Years {
+		globalVar.Db.Table("tb_blog").Where("YEAR(create_time) = ?", year).Order("create_time desc").Find(&RecordDTOs)
+		RecordVO[index].Year = year
+		RecordVO[index].RecordList = RecordDTOs
+	}
+	return RecordVO
 }

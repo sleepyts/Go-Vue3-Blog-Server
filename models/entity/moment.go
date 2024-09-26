@@ -28,7 +28,7 @@ func GetMomentByPage(page, pageSize int) ([]*Moment, error) {
 		return moments, nil
 	}
 
-	err = globalVar.Db.Order("create_time desc").Offset((page-1)*pageSize).Limit(pageSize).Where("visible =?", 1).Find(&moments).Error
+	err = globalVar.Db.Order("create_time DESC").Offset((page-1)*pageSize).Limit(pageSize).Where("visible =?", 1).Find(&moments).Error
 	go redis_util.SetObject(cacheKey, moments, redis_util.MOMENT_PAGE_CACHE_EXPIRE)
 	return moments, err
 }
@@ -37,4 +37,10 @@ func GetMomentCount() (int64, error) {
 	var count int64
 	err := globalVar.Db.Model(&Moment{}).Where("visible =?", 1).Count(&count).Error
 	return count, err
+}
+
+func GetRecentMoments(limit int) ([]*Moment, error) {
+	var moments []*Moment
+	err := globalVar.Db.Order("create_time DESC").Limit(limit).Where("visible =?", 1).Find(&moments).Error
+	return moments, err
 }
