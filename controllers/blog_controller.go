@@ -47,3 +47,46 @@ func GetBlogById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, respose.Sucess(blog))
 
 }
+
+func GetBlogList(ctx *gin.Context) {
+	ctx.JSON(http.StatusOK, respose.Sucess(entity.GetBlogList()))
+}
+
+func UpdateBlog(ctx *gin.Context) {
+	var blog entity.Blog
+	if err := ctx.ShouldBindJSON(&blog); err != nil {
+		ctx.JSON(http.StatusBadRequest, respose.ErrorWithMsg("参数错误"))
+		return
+	}
+	entity.UpdateBlog(&blog)
+	go redis_util.DeleteKeysWithPrefix(redis_util.BLOG_PAGE_CACHE_KEY)
+	go redis_util.DeleteKeysWithPrefix(redis_util.BLOG_CONTENT_CACHE_KEY)
+	go redis_util.DeleteKeysWithPrefix(redis_util.BLOG_PAGE_CATEGORY_CACHE_KEY)
+	ctx.JSON(http.StatusOK, respose.Sucess(""))
+}
+
+func DeleteBlog(ctx *gin.Context) {
+	id, err := strconv.Atoi(ctx.Param("blogId"))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, respose.ErrorWithMsg("blogId参数错误"))
+		return
+	}
+	entity.DeleteBlog(uint(id))
+	go redis_util.DeleteKeysWithPrefix(redis_util.BLOG_PAGE_CACHE_KEY)
+	go redis_util.DeleteKeysWithPrefix(redis_util.BLOG_CONTENT_CACHE_KEY)
+	go redis_util.DeleteKeysWithPrefix(redis_util.BLOG_PAGE_CATEGORY_CACHE_KEY)
+	ctx.JSON(http.StatusOK, respose.Sucess(""))
+}
+
+func AddBlog(ctx *gin.Context) {
+	var blog entity.Blog
+	if err := ctx.ShouldBindJSON(&blog); err != nil {
+		ctx.JSON(http.StatusBadRequest, respose.ErrorWithMsg("参数错误"))
+		return
+	}
+	entity.AddBlog(&blog)
+	go redis_util.DeleteKeysWithPrefix(redis_util.BLOG_PAGE_CACHE_KEY)
+	go redis_util.DeleteKeysWithPrefix(redis_util.BLOG_CONTENT_CACHE_KEY)
+	go redis_util.DeleteKeysWithPrefix(redis_util.BLOG_PAGE_CATEGORY_CACHE_KEY)
+	ctx.JSON(http.StatusOK, respose.Sucess(""))
+}

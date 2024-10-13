@@ -24,3 +24,15 @@ func GetLink() []Link {
 	globalVar.Db.Find(&links)
 	return links
 }
+
+func AddLink(link Link) error {
+	return globalVar.Db.Create(&link).Error
+}
+
+func DeleteLink(id uint) error {
+	return globalVar.Db.Delete(&Link{Id: id}).Error
+}
+
+func UpdateLink(link Link) error {
+	return globalVar.Db.Model(&link).Updates(link).Error
+}

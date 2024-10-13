@@ -61,3 +61,14 @@ func DeleteKeysWithPrefix(prefix string) error {
 	}
 	return nil
 }
+
+func DeleteKey(key string) error {
+	if err := globalVar.RedisDb.Del(key).Err(); err != nil {
+		return err
+	}
+	time.Sleep(100 * time.Millisecond)
+	if err := globalVar.RedisDb.Del(key).Err(); err != nil {
+		return err
+	}
+	return nil
+}

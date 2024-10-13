@@ -9,8 +9,7 @@ import (
 
 func InitServer() *gin.Engine {
 	r := gin.Default()
-	r.Use(middlewares.Logger())
-	r.Use(middlewares.UserInfoLogger())
+
 	r.GET("/settings", controllers.GetSetting)
 	r.GET("/verify", controllers.GetCommentVerify)
 	r.GET("/record", controllers.GetRecordVO)
@@ -22,7 +21,32 @@ func InitServer() *gin.Engine {
 	appGroup := r.Group("/app")
 	linkGroup := r.Group("/links")
 	adminGroup.Use(middlewares.AdminAuth())
+	r.Use(middlewares.UserInfoLogger())
+	// 管理员相关路由
+	{
+		adminGroup.POST("/login", controllers.Login)
 
+		{
+			adminGroup.DELETE("/app/:id", controllers.DeleteApp)
+			adminGroup.POST("/app", controllers.AddApp)
+			adminGroup.PUT("/app", controllers.UpdateApp)
+		}
+		{
+			adminGroup.GET("/Blog", controllers.GetBlogList)
+			adminGroup.PUT("/Blog", controllers.UpdateBlog)
+			adminGroup.DELETE("/Blog/:id", controllers.DeleteBlog)
+			adminGroup.POST("/Blog", controllers.AddBlog)
+		}
+		{
+			adminGroup.PUT("/links", controllers.UpdateLink)
+			adminGroup.DELETE("/links/:id", controllers.DeleteLink)
+			adminGroup.POST("/links", controllers.AddLink)
+		}
+		{
+
+		}
+
+	}
 	// APP相关路由
 	{
 		appGroup.GET("", controllers.GetApp)
@@ -35,6 +59,7 @@ func InitServer() *gin.Engine {
 	{
 		momentGroup.GET("", controllers.GetMomentByPage)
 		momentGroup.POST("/like/:momentId", controllers.LikeOrUnlikeMoment)
+
 	}
 	// 分类相关路由
 	{

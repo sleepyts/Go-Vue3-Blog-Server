@@ -128,3 +128,22 @@ func GetRecordVO() []vo.RecordVO {
 	}
 	return RecordVO
 }
+
+func GetBlogList() []Blog {
+	var blogs []Blog
+	globalVar.Db.Find(&blogs)
+	return blogs
+}
+func UpdateBlog(blog *Blog) {
+	*blog.UpdateTime = time.Now()
+	globalVar.Db.Save(blog)
+}
+
+func DeleteBlog(id uint) {
+	globalVar.Db.Delete(&Blog{}, id)
+}
+
+func AddBlog(blog *Blog) {
+
+	globalVar.Db.Create(blog)
+}

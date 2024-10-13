@@ -31,7 +31,7 @@ var AppConfig *Config
 func Init() {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath("..")
+	viper.AddConfigPath("../Go-Vue3-Blog-Server")
 
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatalf("Read config error : %v", err)

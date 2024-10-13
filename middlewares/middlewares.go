@@ -2,23 +2,12 @@ package middlewares
 
 import (
 	"Go-Vue3-Blog-Server/models/respose"
+	jwtutil "Go-Vue3-Blog-Server/utils/jwt_util"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
-
-func Logger() gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		start := time.Now()
-		ctx.Next()
-		go func() {
-			log.Printf("\nIp: %s\nRequest time: User-Agent: %s\nProcessed time: %s\nMethod: %s\nPath: %s\n", ctx.ClientIP(), ctx.Request.UserAgent(), time.Since(start), ctx.Request.Method, ctx.Request.URL.Path)
-
-		}()
-	}
-}
 
 func UserInfoLogger() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
@@ -29,10 +18,22 @@ func UserInfoLogger() gin.HandlerFunc {
 
 func AdminAuth() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		if token, ok := ctx.Get("token"); ok {
-			log.Println(token)
+		if ctx.Request.URL.Path == "/admin/login" {
 			ctx.Next()
+			return
 		}
+		if token, ok := ctx.Request.Header["Authorization"]; ok {
+			userName, err := jwtutil.VerifyToken(token[0])
+			if err != nil {
+				log.Println(err)
+				ctx.AbortWithStatusJSON(http.StatusUnauthorized, respose.ErrorWithMsg("Unauthorized"))
+				return
+			}
+			ctx.Set("userName", userName)
+			ctx.Next()
+			return
+		}
+		log.Println("Admin Auth Fail")
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, respose.ErrorWithMsg("Unauthorized"))
 
 	}
